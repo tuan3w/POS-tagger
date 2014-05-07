@@ -38,7 +38,7 @@ public class StringIterator implements Iterable<String> {
 				if (end == s.length())
 					tmp = s.substring(start);
 				else
-					tmp = s.substring(start, end);
+					tmp = s.substring(start, end + 1);
 				start = end;
 				while (start < s.length()
 						&& isDelimiterCharacter(s.charAt(start)))

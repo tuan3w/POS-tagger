@@ -13,11 +13,11 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/vn.hus.nlp.tokenizer-4.1.1.jar"/>
 	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/json_simple-1.1.jar"/>
 	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/vn.hus.nlp.fsm-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/vn.hus.nlp.utils-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/vn.hus.nlp.sd-2.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lol/workspace/POSTagger/lib/vn.hus.nlp.tokenizer-4.1.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

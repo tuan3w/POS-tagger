@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import tagger.Constant.ModelSize;
 import utils.TimePerf;
 
 /**
@@ -38,8 +39,11 @@ public class ReadDictionary {
 	private HashSet<String> tags;
 	private String path;
 	private double l1, l2, l3;
+	private ModelSize size;
 
-	public ReadDictionary(String path) {
+	public ReadDictionary(ModelSize size, String path) {
+		System.out.println("Dic large : " + (size == ModelSize.LARGE));
+		this.size = size;
 		this.path = path;
 		this.biModel = new ConditionalDictionary();
 		this.wtProb = new ConditionalDictionary();
@@ -49,29 +53,36 @@ public class ReadDictionary {
 		this.tags = new HashSet<String>();
 	}
 
-	public void clear() {
-		biModel.clear();
-		wtProb.clear();
-		triModel.clear();
-		wordTags.clear();
-		tags.clear();
+	public ReadDictionary(String path) {
+		this(ModelSize.LARGE, path);
+	}
+
+	public void buildModel() {
+		System.out.println("Add path :  " + path);
+		addFolder(path);
+	}
+
+	public void optimize() {
+		this.biModel.computeFreq();
+		this.triModel.computeFreq();
+		this.wtProb.computeFreq();
 	}
 
 	public void setTrainPath(String path) {
 		this.path = path;
 	}
 
-	public void buildModel() {
+	public void addFolder(String path) {
 		// list file in the directory
 		File f = new File(path);
+		if (!f.exists())
+			System.out.println("File khong ton tai");
 		String[] flist = f.list();
 
 		String fname;
 		BufferedReader bf;
 		String sentence;
 		String w[];
-
-		String keyword;
 
 		String D = "_S2_"; // dump
 		String prev2, prev1;
@@ -96,6 +107,12 @@ public class ReadDictionary {
 
 						if (w.length != 2)
 							continue;
+						w[1] = w[1].toUpperCase();
+
+						if (size == ModelSize.SMALL) {
+							if (w[1].matches("[A-Z]+"))
+								w[1] = "" + w[1].charAt(0);
+						}
 						// add tag count
 						uModel.inc(w[1]);
 
@@ -135,7 +152,7 @@ public class ReadDictionary {
 		for (String wd : wordTags.keySet()) {
 
 			for (String t : wordTags.get(wd)) {
-				if (t.matches("\\w+") && wtProb.getCombinationCount(t, wd) < 3) {
+				if (t.matches("\\w+") && wtProb.getCombinationCount(t, wd) < 5) {
 					wtProb.inc(t, "<UNK>", wtProb.getCombinationCount(t, wd));
 					tmp.add(t);
 				}
@@ -145,14 +162,15 @@ public class ReadDictionary {
 			}
 		}
 		wordTags.put("<UNK>", tmp);
-		System.out.println(tmp.size());
-//		for (String t : tmp) {
-//			addTagToWord("<UNK>", t);
-//		}
-		// compute lambda
+
 		System.out.println("Total of tags : " + tags.size());
+		StringBuffer t = new StringBuffer();
+		for (String s : tags)
+			if (s.matches("\\w+"))
+				t.append(" " + s);
+		System.out.println(t.toString());
 		this.computeLambda();
-		System.out.println(Arrays.toString(tags.toArray()));
+
 	}
 
 	private double safeDiv(int a, int b) {
@@ -161,12 +179,13 @@ public class ReadDictionary {
 		else
 			return a * 1.0 / b;
 	}
-	public void clearCache() {
-		triModel.clearCache();
-		biModel.clearCache();
-		wtProb.clearCache();
-		
+
+	public void clear() {
+		triModel.clear();
+		biModel.clear();
+		wtProb.clear();
 	}
+
 	public void computeLambda() {
 		double sum;
 		l1 = l2 = l3 = 0.0;
@@ -232,48 +251,23 @@ public class ReadDictionary {
 
 	}
 
-	public TagCount getTagCount(String word) {
-		return null;
-		// return hashtable.get(word);
-	}
-
 	public Double getProbTagGiven1Tag(String t1, String t2) {
-		// Double p = bModel.get(t1 + "/" + t2);
-		// if (p != null)
-		// return p;
-		// else
-		// return 0.0;
 		return biModel.freq(t2, t1);
 	}
 
 	public Double getProbTagGiven2Tag(String t1, String t2, String t3) {
 		// return triModel.freq(t2 + " / " + t3, t1);
+
 		return l1 * uModel.freq(t1) + l2 * biModel.freq(t2, t1) + l3
 				* triModel.freq(t2 + " " + t3, t1);
 	}
-
-	// private void addToMap(Hashtable<String, Double> h, String t) {
-	// Double tmp = h.get(t);
-	// if (tmp == null)
-	// h.put(t, 1.0);
-	// else
-	// h.put(t, tmp + 1);
-	// }
 
 	public String[] getAllTags() {
 		return tags.toArray(new String[tags.size()]);
 	}
 
 	public double getProbWordGivenTag(String word, String t) {
-		double p = wtProb.freq(t, word);
-		int c = wtProb.getConditionalCount(word);
-		// if (c == 0)
-		// if (t == "N") return 1.0;
-		// else
-		// return Math.exp(-20);
-		// else
-		// return p;
-		return p;
+		return wtProb.freq(t, word);
 
 	}
 
@@ -284,5 +278,9 @@ public class ReadDictionary {
 				wordTags.add(t);
 		}
 		return wordTags.toArray(new String[wordTags.size()]);
+	}
+
+	public boolean isKnownWord(String w) {
+		return wordTags.keySet().contains(w);
 	}
 }

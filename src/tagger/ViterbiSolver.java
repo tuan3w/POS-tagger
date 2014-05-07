@@ -1,6 +1,7 @@
 package tagger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 public class ViterbiSolver {
@@ -19,11 +20,10 @@ public class ViterbiSolver {
 		Double p, p1;
 		String prev = "_S2_"; // dump
 		st = prev;
-		String bs = null;
-		ArrayList<String> tmp;
+		String bs = "";
 		Hashtable<String, String> backPointer = new Hashtable<String, String>();
 		String w = words[0];
-		if (dic.getPosibleTags(w) == null) {
+		if (!dic.isKnownWord(w)) {
 			System.out.println(w + " is unknown");
 			w = "<UNK>";
 		}
@@ -38,16 +38,22 @@ public class ViterbiSolver {
 		}
 		for (int ix = 1; ix < words.length; ix++) {
 			w = words[ix];
-			if (dic.getPosibleTags(w) == null) {
-				// unknown word
-				System.out.println("Unkown word '" + w + "'");
+			//HashSet<String> tlist;
+			if (!dic.isKnownWord(w)) {
+				System.out.println("unknown " + w);
 				w = "<UNK>";
 			}
+			//tlist = dic.getPosibleTags(w);
+//			if (dic.getPosibleTags(w) == null) {
+//				// unknown word
+//				//System.out.println("Unkown word '" + w + "'");
+//				w = "<UNK>";
+//			}
 
 			for (int i = 0; i < allTags.length; i++) {
 				tag = allTags[i];
 				p = -Math.exp(100);
-
+				//for (String st1 : dic.getPosibleTags(w)) {
 				for (int j = 0; j < allTags.length; j++) {
 					st = allTags[j];
 					if (ix > 0) {
@@ -82,8 +88,8 @@ public class ViterbiSolver {
 				p = p1;
 			}
 		}
-		//System.out.println("p = " + p);
-		tmp = new ArrayList<String>();
+		
+		ArrayList<String> tmp = new ArrayList<String>();
 		tmp.add(bs);
 		int ind = words.length - 1;
 		bs = backPointer.get(bs + "/" + ind);
@@ -93,6 +99,7 @@ public class ViterbiSolver {
 			bs = backPointer.get(bs + "/" + ind);
 		}
 		return tmp.toArray(new String[tmp.size()]);
+		
 	}
 
 	private Double getCell(String w, int n) {

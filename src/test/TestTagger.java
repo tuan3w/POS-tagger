@@ -2,6 +2,7 @@ package test;
 
 import tagger.HMMTagger;
 import tagger.IPOSTagger;
+import utils.ArrayUtils;
 
 /**
  * 
@@ -10,7 +11,7 @@ import tagger.IPOSTagger;
  */
 public class TestTagger {
 	public static void main(String[] args) {
-		IPOSTagger tagger = new HMMTagger("data");
+		HMMTagger tagger = new HMMTagger(".");
 		String[] tests = {
 				"tôi là Tuấn"
 		};
@@ -20,10 +21,9 @@ public class TestTagger {
 			System.out.println("+++++++++++++++++++++++");
 			System.out.println(s);
 			tagString = "";
-			String[] tags = tagger.parse(s);
+			String[] tags = tagger.getTags(s);
 			
-			for (int j = 0; j < tags.length; j++)
-				tagString += " " + tags[j];
+			tagString = ArrayUtils.join(tags, " ");
 			
 			System.out.println(tagString);
 			

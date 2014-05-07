@@ -2,14 +2,14 @@ package test;
 
 import org.apache.catalina.tribes.util.Arrays;
 
+import tokenizer.VietTokenizerWrapper;
 import utils.ArrayUtils;
 import utils.StringIterator;
 import utils.TokenizerUtil;
-import vn.hus.nlp.tokenizer.VietTokenizer;
 
 public class TestTokenizer {
 	public static void main(String[] args) {
-		VietTokenizer tokenizer = new VietTokenizer();
+		VietTokenizerWrapper tokenizer = new VietTokenizerWrapper();
 		String paragraph = "Đây là chiếc cuối cùng của lô tàu ngầm Project 636, được Nga đóng cho Việt Nam theo hợp đồng đã ký vào năm 2009 . "
 				+ "Bên cạnh việc xây dựng tàu ngầm, thỏa thuận còn kèm theo việc cung cấp thiết bị cần thiết và đào tạo thủy thủ cho Việt Nam .\n\n"
 				+ "Chiếc tàu đầu tiên và thứ hai \"Hà Nội\" và \"Thành phố Hồ Chí Minh\" đã gia nhập Hải quân Việt Nam mới đây ."
