@@ -92,8 +92,8 @@ public class Comparer {
 	}
 
 	public static void main(String[] args) {
-		Comparer comparer = new Comparer("T1");
-		//Comparer comparer = new Comparer("T2");
+//		Comparer comparer = new Comparer("T1");
+		Comparer comparer = new Comparer("T2");
 		comparer.process();
 		System.out.println(comparer.getSuccessPercent());
 	}

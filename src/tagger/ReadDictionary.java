@@ -3,28 +3,13 @@ package tagger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import tagger.Constant.ModelSize;
-import utils.TimePerf;
 
 /**
  * @author lol Main Dictionary Store all probability information
@@ -155,10 +140,11 @@ public class ReadDictionary {
 				if (t.matches("\\w+") && wtProb.getCombinationCount(t, wd) < 5) {
 					wtProb.inc(t, "<UNK>", wtProb.getCombinationCount(t, wd));
 					tmp.add(t);
+					System.out.println("<" + wd + "," + t + ">"
+							+ wtProb.freq("UNK", t));
 				}
 				// addTagToWord("<UNK>", t);
-				// System.out.println("<" + wd + "," + t + ">"
-				// + wtProb.freq("UNK", t));
+
 			}
 		}
 		wordTags.put("<UNK>", tmp);
@@ -170,6 +156,9 @@ public class ReadDictionary {
 				t.append(" " + s);
 		System.out.println(t.toString());
 		this.computeLambda();
+		System.out.println("Unkown word type: ");
+		for (String t2 : getPosibleTags("<UNK>"))
+			System.out.println("Tag " + t + ", p= " + getProbWordGivenTag("<UNK>", t2));
 
 	}
 

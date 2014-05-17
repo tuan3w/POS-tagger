@@ -1,7 +1,5 @@
 package tagger;
 
-import java.util.Iterator;
-
 import tagger.Constant.ModelSize;
 import tokenizer.VietTokenizerWrapper;
 import utils.StringIterator;

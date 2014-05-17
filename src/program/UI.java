@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 
 import tagger.Constant.ModelSize;
 import tagger.HMMTagger;
+import utils.StringIterator;
 
 @SuppressWarnings("serial")
 public class UI extends JFrame implements ActionListener {
@@ -29,6 +30,7 @@ public class UI extends JFrame implements ActionListener {
 		tinput.setBorder(BorderFactory.createTitledBorder("Nhập câu"));
 
 		toutput = new JTextArea();
+		toutput.setLineWrap(true);
 		toutput.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createLoweredBevelBorder(), "Kết quả"));
 		toutput.setEditable(false);
@@ -56,13 +58,24 @@ public class UI extends JFrame implements ActionListener {
 		String tests = tinput.getText();
 
 		// ArrayList<String> tokens = getToken(tests);
-		String[] tokens = tagger.tokenize(tests).split(" ");
-		String[] tags = tagger.getTags(tests);
+		String[] tokens;
+		// String[] tokens = tagger.tokenize(tests).split(" ");
+		String[] tags;
 
 		String out = "";
-		for (int i = 0; i < tags.length; i++) {
-			out += tokens[i] + "/" + tags[i] + " ";
+		int idx = 0;
+		for (String s : new StringIterator(tests, StringIterator.SENTENCE_DELIMITER)) {
+			System.out.println("<STRING>" + s);
+			
+			tags = tagger.getTags(s);
+			out += ++idx + ") ";
+			tokens = tagger.tokenize(s).split(" ");
+			for (int i = 0; i < tags.length; i++) {
+				out += tokens[i] + "/" + tags[i] + " ";
+			}
+			out += "\n";
 		}
+		System.out.println(out);
 		toutput.setText(out);
 	}
 
